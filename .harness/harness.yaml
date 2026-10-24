@@ -240,20 +240,15 @@ pipeline:
                         image: golang:1.20
                         envVariables:
                           GOTOOLCHAIN: go1.26.10
-                        shell: Sh
+                        shell: Powershell
                         command: |-
-                          # force go modules
-                          export GOPATH=""
-
-                          # disable cgo
-                          export CGO_ENABLED=0
-
-                          set -e
-                          set -x
-
-                          # Windows
-                          GOOS=windows
+                          $ErrorActionPreference = "Stop"
+                          . ./scripts/setup-go-windows.ps1
+                          $env:GOPATH = ''
+                          $env:CGO_ENABLED = '0'
+                          $env:GOOS = 'windows'
                           go build -v -a -tags netgo -o release/windows/amd64/drone-volume-cache.exe .
+                          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
                       when:
                         stageStatus: Success
                   - step:
@@ -330,20 +325,15 @@ pipeline:
                         image: golang:1.20
                         envVariables:
                           GOTOOLCHAIN: go1.26.10
-                        shell: Sh
+                        shell: Powershell
                         command: |-
-                          # force go modules
-                          export GOPATH=""
-
-                          # disable cgo
-                          export CGO_ENABLED=0
-
-                          set -e
-                          set -x
-
-                          # Windows
-                          GOOS=windows
+                          $ErrorActionPreference = "Stop"
+                          . ./scripts/setup-go-windows.ps1
+                          $env:GOPATH = ''
+                          $env:CGO_ENABLED = '0'
+                          $env:GOOS = 'windows'
                           go build -v -a -tags netgo -o release/windows/amd64/drone-volume-cache.exe .
+                          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
                   - step:
                       type: Plugin
                       name: BuildAndPushDockerPlugin
